@@ -10,14 +10,22 @@ Currently being used on https://www.comulis.eu/correlation-software-porto2019
 ### biii_search.js
 code to be added to the header, has the biii.eu query function
 
+
 ### segmentation.html
 Button to search for segmentation
+
 
 ### registration.html
 Button to search for registration
 
+
 ### visualization.html
 Button to search for visualization
 
+
 ### table.html
 Code for where the search result table needs to be generated
+
+
+### custom.css
+Added the style for the search result page and table
