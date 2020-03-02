@@ -1,0 +1,70 @@
+/* Format the cookie banner --------- */
+#cookie-banner { 
+  max-width:100%;
+  background:#000; /*change background color*/
+}
+#cookie-banner p { 
+  padding:12px;
+  padding-left: 20px;
+  padding-right: 70px;
+  font-size:1em;
+  line-height:1.2em;
+  text-align:left; 
+  color:#ddd; /*change font color*/
+  margin:0;
+}
+#cookie-banner a { 
+  text-align:center; 
+  color:#fff; /*change cookie policy link color*/
+  font-weight:bold;
+}
+.close-cookie-banner {
+  position: absolute;
+  padding:10px; 
+  top:0;
+  right:0;
+  text-align: right;
+}
+
+.table_biii td{
+  padding: 10px;
+}
+
+.table_biii td:nth-child(1)  {
+  vertical-align: top;
+  text-align: left;
+  width: 20%;
+  min-width: 130px;
+  max-width: 130px;
+}
+
+.table_biii td:nth-child(2)  {
+  vertical-align: top;
+  text-align: left;
+  width: 30%;
+  font-size: 20px;
+  font-family: Sans-Serif;
+  font-weight: bold;
+
+}
+
+.table_biii td:nth-child(3)  {
+  vertical-align: top;
+  text-align: left;
+  width: 50%;
+  padding-bottom: 100px;
+}
+
+.biii-thumb{
+  position: relative;
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 5%;
+
+}
+/* This sets the border for the Correlation software image*/
+.image-inset {
+  border-radius: (15px);
+}
+/*------------------------------------*/
