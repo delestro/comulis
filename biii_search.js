@@ -1,7 +1,13 @@
 <script>
-var json_url_registration="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=registration)&_format=json&source=COMULIS";
+
+//var json_url_registration="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=registration)&_format=json&source=COMULIS";
+
+var json_url_registration="https://test.biii.eu/all-content-rest?type=software&field_has_function_target_id%5B%5D=4192&field_type_target_id=All&_format=json";
+  
 var json_url_segmentation="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=segmentation)&_format=json&source=COMULIS";
+
 var json_url_visualization="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=visualization)&_format=json&source=COMULIS";
+
 var basename_img="https://test.biii.eu";
 var basename_node="https://test.biii.eu/node/";
 
@@ -33,7 +39,7 @@ var ajaxGet = function (url, callback) {
 
 function getBiseData(tableid, search) {
 
-  // Set the json_url accirding to the search we need
+  // Set the json_url according to the search we need
   if (search == 'registration') {
     json_url = json_url_registration
 
@@ -67,21 +73,21 @@ function getBiseData(tableid, search) {
             for (const e of response) {
                 // console.log(e.title);
                 var link="<a href=\""+basename_node+e.nid+"\">";
-
                 var img="";
+                var short_body = e.body.substring(0, 200) + '...';
+
                 if (e.field_image)
 		  img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
-
-                addRowToTable(tableid,[img,e.title,e.body],link);
+	
+                //addRowToTable(tableid,[img,e.title,e.body],link);
+                addRowToTable(tableid,[img,e.title,short_body],link);
             }
     });
 
     // Style adjsutments
     var table=document.getElementById(tableid);
-    //table.style.backgroundColor = "red";
     table.setAttribute("class", "table_biii");
 }
-
 
 
 // TABLE GENERATOR
@@ -98,5 +104,4 @@ function addRowToTable(tableid,strs,link) {
 
 
 }
-
 </script>
