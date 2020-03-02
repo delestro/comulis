@@ -67,4 +67,15 @@
 .image-inset {
   border-radius: (15px);
 }
+
+.sqs-block-button-element:focus {
+  background-color: #1c3346 !important;
+  color: white !important;
+}
+
+.sqs-block-button-element:hover {
+  background-color: #1c3346 !important;
+  color: white !important;
+}
+
 /*------------------------------------*/
