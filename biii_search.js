@@ -126,10 +126,6 @@ function publish_JSON_data(tableid, tableid2, textid, textid2, response1, respon
       addRowToTable(tableid2,[img,e.title,short_body],link); //Add to Table2
     }
     document.getElementById(textid).innerHTML = count1 + " (" + count2 + ")" + " results"; //Report #hits
-  
-    // Style adjustments
-    var table=document.getElementById(tableid);
-    table.setAttribute("class", "table_biii"); //To move to table.html?
   }
 }
 
