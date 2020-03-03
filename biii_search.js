@@ -1,4 +1,4 @@
-<script>
+//<script>
 // This is injected html code into the page header, thus script tag at beginning/end.
 
 
@@ -79,7 +79,7 @@ function parse_JSON_response(textid, response) {
 
 
 //Parse result and place the data in the biiitable
-function publish_JSON_data(tableid, textid, response1, response2) {
+function publish_JSON_data(tableid, tableid2, textid, response1, response2) {
   response2=parse_JSON_response(textid, response2);
 
   let in_response1 = new Set();
@@ -89,12 +89,10 @@ function publish_JSON_data(tableid, textid, response1, response2) {
   
   count1=0;
   count2=0;
-  response=response2;
-  if (response) {
-    document.getElementById(tableid).innerHTML=""; //Clear table
 
+  if (response2) {
     //Loop it twice, first 1&2, then 2 only
-    for (const e of response) {
+    for (const e of response2) {
       if (!in_response1.has(e.nid))
         continue; //Not in response1
 
@@ -106,12 +104,12 @@ function publish_JSON_data(tableid, textid, response1, response2) {
         img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
 
       count1++;
-      addRowToTable(tableid,[img,e.title,short_body],link);
+      addRowToTable(tableid,[img,e.title,short_body],link); //Add to Table1
     }
 
     //Possibly add some separator, empty row or similar
 
-    for (const e of response) {
+    for (const e of response2) {
       if (in_response1.has(e.nid))
         continue; //In response1
       
@@ -122,13 +120,10 @@ function publish_JSON_data(tableid, textid, response1, response2) {
       if (e.field_image)
         img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
 
-      if (!in_response1.has(e.nid))
-        short_body = "NOT! "+short_body; //Not in response1
-
       count2++;
-      addRowToTable(tableid,[img,e.title,short_body],link);
+      addRowToTable(tableid2,[img,e.title,short_body],link); //Add to Table2
     }
-    document.getElementById(textid).innerHTML = count1 + "(" + count2 + ")" + " results"; //Report #hits
+    document.getElementById(textid).innerHTML = count1 + " (" + count2 + ")" + " results"; //Report #hits
   
     // Style adjustments
     var table=document.getElementById(tableid);
@@ -138,8 +133,9 @@ function publish_JSON_data(tableid, textid, response1, response2) {
 
 
 //Second search
-function getFreeTextData(tableid, textid, search, response1) {
+function getFreeTextData(tableid, tableid2, textid, search, response1) {
   response1=parse_JSON_response(textid, response1);
+  if (!response1) return;
 
   document.getElementById(textid).innerHTML = "Searching...."; //add a dot
 
@@ -155,20 +151,22 @@ function getFreeTextData(tableid, textid, search, response1) {
   }
 
   //Callback is called upon response of the http request which typically is long after this function ends
-  ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,textid,response1,response2)});
+  ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,tableid2,textid,response1,response2)});
 }
 
 
 // Externally called function
-function getBiseData(tableid, search) {
+function getBiseData(tableid, tableid2, search) {
   textid='search_response_text';
   document.getElementById(textid).innerHTML = "Searching...";
+  document.getElementById(tableid).innerHTML=""; //Clear table
+  document.getElementById(tableid2).innerHTML=""; //Clear table2
 
   // Set the json_url according to the search we need
   json_url=json_url_multimodal;
 
   //Callback is called upon response of the http request which typically is long after this function ends
-  ajaxGet(json_url,function (response1) {getFreeTextData(tableid, textid, search, response1)}); //callback is second search
+  ajaxGet(json_url,function (response1) {getFreeTextData(tableid, tableid2, textid, search, response1)}); //callback is second search
 }
 
 
@@ -185,4 +183,4 @@ function addRowToTable(tableid,strs,link) {
   };
 }
   
-</script>
+//</script>
