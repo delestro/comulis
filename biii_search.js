@@ -1,17 +1,29 @@
 <script>
+// This is injected html code into the page header, thus script tag at beginning/end.
 
-//var json_url_registration="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=registration)&_format=json&source=COMULIS";
 
-var json_url_registration="https://test.biii.eu/all-content-rest?type=software&field_has_function_target_id%5B%5D=4192&field_type_target_id=All&_format=json";
-  
-var json_url_segmentation="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=segmentation)&_format=json&source=COMULIS";
+// BIII ACCESS URLs
 
-var json_url_visualization="https://test.biii.eu/searchjsonexport?search_api_fulltext=(?=visualization)&_format=json&source=COMULIS";
+//In due time change this to the main site
+var base_url="https://test.biii.eu";
 
-var basename_img="https://test.biii.eu";
-var basename_node="https://test.biii.eu/node/";
+var full_text_search="/searchjsonexport?search_api_fulltext="
+var json_postfix="&_format=json&source=COMULIS";
+var make_full_text_url = function(keyword) { //No checking performed, do NOT feed user supplied data
+  return base_url+full_text_search+"(?="+keyword+")"+json_postfix;
+}
 
-  // DATA FETCH //
+//These are used to query Biii
+var json_url_registration=make_full_text_url("registration");
+var json_url_segmentation=make_full_text_url("segmentation");
+var json_url_visualization=make_full_text_url("visualization");
+
+//These are used to extract content for the resulting table
+var basename_img=base_url;
+var basename_node=base_url+"/node/";
+
+
+// DATA FETCH
 
 // simple cross-browser ajax helper
 var ajaxGet = function (url, callback) {
@@ -74,10 +86,10 @@ function getBiseData(tableid, search) {
                 // console.log(e.title);
                 var link="<a href=\""+basename_node+e.nid+"\">";
                 var img="";
-                var short_body = e.body.substring(0, 200) + '...';
+                var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
 
                 if (e.field_image)
-		  img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
+		              img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
 	
                 //addRowToTable(tableid,[img,e.title,e.body],link);
                 addRowToTable(tableid,[img,e.title,short_body],link);
@@ -101,7 +113,6 @@ function addRowToTable(tableid,strs,link) {
     var cell=row.insertCell(-1);
     cell.innerHTML=link+s+"</a>";  //Ugly code to make it clickable, just as example
   };
-
-
 }
+  
 </script>
