@@ -13,10 +13,14 @@ var make_full_text_url = function(keyword) { //No checking performed, do NOT fee
   return base_url+full_text_search+"(?="+keyword+")"+json_postfix;
 }
 
+//Search for 'type=software' and 'has_topic=multimodal'
+var advanced_search="/all-content-rest?type=software&field_has_topic_target_id_1%5B%5D=4774"
+
 //These are used to query Biii
 var json_url_registration=make_full_text_url("registration");
 var json_url_segmentation=make_full_text_url("segmentation");
 var json_url_visualization=make_full_text_url("visualization");
+var json_url_multimodal=base_url+advanced_search+json_postfix;
 
 //These are used to extract content for the resulting table
 var basename_img=base_url;
@@ -40,16 +44,69 @@ var ajaxGet = function (url, callback) {
     if (!xhr)
         return null;
     xhr.open("GET", url,true);
+    response = null;
     xhr.onreadystatechange=function() {
       if (xhr.readyState==4 && callback) {
-        callback(xhr)
+        response=callback(xhr)
       }
     }
     xhr.send(null);
-    return xhr;
+    return response;
 };
 
+//Takes xhr response and asks for JSON data
+//Errors are placed into getElementById(textid)
+function parse_JSON_response(textid, response) {
+  // console.log(response.status);
+  if (response.status !== 200) {
+    document.getElementById(textid).innerHTML = "Failed retrieving data from biii! "+response.status+" - "+response.statusText;
+    return null;
+  }
+  try {
+    response = JSON.parse(response.responseText);
+  } catch (objError) {
+    console.error(objError.message);
+    document.getElementById(textid).innerHTML = "Failed parsing JSON data! "+objError.message;
+    return null;
+  }
+  if (!response) {
+    document.getElementById(textid).innerHTML = "Failed getting JSON data!";
+    return null;
+  }
+  // We got data! :-)
+  return response;
+}
+
+//Place the data in the biiitable
+function publish_JSON_data(tableid, textid, response) {
+  response=parse_JSON_response(textid, response);
+
+  if (response) {
+    document.getElementById(textid).innerHTML = response.length + " results"; //Report #hits
+
+    document.getElementById(tableid).innerHTML="";
+    for (const e of response) {
+        // console.log(e.title);
+        var link="<a href=\""+basename_node+e.nid+"\">";
+        var img="";
+        var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
+
+        if (e.field_image)
+          img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
+
+        //addRowToTable(tableid,[img,e.title,e.body],link);
+        addRowToTable(tableid,[img,e.title,short_body],link);
+    }
+
+    // Style adjustments
+    var table=document.getElementById(tableid);
+    table.setAttribute("class", "table_biii");
+  }
+}
+
 function getBiseData(tableid, search) {
+  textid='search_response_text';
+  document.getElementById(textid).innerHTML = "Searching...";
 
   // Set the json_url according to the search we need
   if (search == 'registration') {
@@ -62,47 +119,8 @@ function getBiseData(tableid, search) {
     json_url = json_url_visualization
   }
 
-  ajaxGet(
-        json_url,
-        function (response) {
-          // console.log(response.status);
-          if (response.status !== 200) {
-            document.getElementById('search_response_text').innerHTML = "Failed retrieving data from biii! "+response.status+" - "+response.statusText;
-            return;
-          }
-          try {
-            response = JSON.parse(response.responseText);
-          } catch (objError) {
-            console.error(objError.message);
-            document.getElementById('search_response_text').innerHTML = "Failed parsing JSON data! "+objError.message;
-            return;
-          }
-          if (!response) {
-              document.getElementById('search_response_text').innerHTML = "Failed getting JSON data!";
-              return;
-          }
-        
-          // We got data! :-)
-          document.getElementById('search_response_text').innerHTML = response.length + " results"; //Report #hits
-
-          document.getElementById(tableid).innerHTML="";
-          for (const e of response) {
-              // console.log(e.title);
-              var link="<a href=\""+basename_node+e.nid+"\">";
-              var img="";
-              var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
-
-              if (e.field_image)
-                img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
-
-              //addRowToTable(tableid,[img,e.title,e.body],link);
-              addRowToTable(tableid,[img,e.title,short_body],link);
-          }
-    });
-
-    // Style adjsutments
-    var table=document.getElementById(tableid);
-    table.setAttribute("class", "table_biii");
+  //Callback is called upon response of the http request
+  response=ajaxGet(json_url,function (response) {publish_JSON_data(tableid,textid,response)});
 }
 
 
