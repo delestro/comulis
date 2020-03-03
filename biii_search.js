@@ -82,33 +82,54 @@ function parse_JSON_response(textid, response) {
 function publish_JSON_data(tableid, textid, response1, response2) {
   response2=parse_JSON_response(textid, response2);
 
-  document.getElementById(textid).innerHTML = response1.length + ":" + response2.length + " results"; //Report #hits
-
   let in_response1 = new Set();
   for (const e of response1) {
     in_response1.add(e.nid); //Store the NodeID
   }
   
+  count1=0;
+  count2=0;
   response=response2;
   if (response) {
     document.getElementById(tableid).innerHTML=""; //Clear table
 
+    //Loop it twice, first 1&2, then 2 only
     for (const e of response) {
-        // console.log(e.title);
-        var link="<a href=\""+basename_node+e.nid+"\">";
-        var img="";
-        var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
+      if (!in_response1.has(e.nid))
+        continue; //Not in response1
 
-        if (e.field_image)
-          img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
+      var link="<a href=\""+basename_node+e.nid+"\">";
+      var img="";
+      var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
 
-        if (!in_response1.has(e.nid))
-          short_body = "NOT!"+short_body; //Not in response1
+      if (e.field_image)
+        img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
 
-        //addRowToTable(tableid,[img,e.title,e.body],link);
-        addRowToTable(tableid,[img,e.title,short_body],link);
+      count1++;
+      addRowToTable(tableid,[img,e.title,short_body],link);
     }
 
+    //Possibly add some separator, empty row or similar
+
+    for (const e of response) {
+      if (in_response1.has(e.nid))
+        continue; //In response1
+      
+      var link="<a href=\""+basename_node+e.nid+"\">";
+      var img="";
+      var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
+
+      if (e.field_image)
+        img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
+
+      if (!in_response1.has(e.nid))
+        short_body = "NOT! "+short_body; //Not in response1
+
+      count2++;
+      addRowToTable(tableid,[img,e.title,short_body],link);
+    }
+    document.getElementById(textid).innerHTML = count1 + "(" + count2 + ")" + " results"; //Report #hits
+  
     // Style adjustments
     var table=document.getElementById(tableid);
     table.setAttribute("class", "table_biii"); //To move to table.html?
@@ -147,7 +168,7 @@ function getBiseData(tableid, search) {
   json_url=json_url_multimodal;
 
   //Callback is called upon response of the http request which typically is long after this function ends
-  ajaxGet(json_url,function (response) {getFreeTextData(tableid, textid, search, response1)}); //callback is second search
+  ajaxGet(json_url,function (response1) {getFreeTextData(tableid, textid, search, response1)}); //callback is second search
 }
 
 
