@@ -1,4 +1,4 @@
-//<script>
+<script>
 // This is injected html code into the page header, thus script tag at beginning/end.
 
 
@@ -79,7 +79,7 @@ function parse_JSON_response(textid, response) {
 
 
 //Parse result and place the data in the biiitable
-function publish_JSON_data(tableid, tableid2, textid, response1, response2) {
+function publish_JSON_data(tableid, tableid2, textid, textid2, response1, response2) {
   response2=parse_JSON_response(textid, response2);
 
   let in_response1 = new Set();
@@ -107,12 +107,14 @@ function publish_JSON_data(tableid, tableid2, textid, response1, response2) {
       addRowToTable(tableid,[img,e.title,short_body],link); //Add to Table1
     }
 
-    //Possibly add some separator, empty row or similar
-
+    //Fill Table 2
     for (const e of response2) {
       if (in_response1.has(e.nid))
         continue; //In response1
-      
+    
+      if (!count2)
+        setVisible(textid2);
+    
       var link="<a href=\""+basename_node+e.nid+"\">";
       var img="";
       var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
@@ -133,7 +135,7 @@ function publish_JSON_data(tableid, tableid2, textid, response1, response2) {
 
 
 //Second search
-function getFreeTextData(tableid, tableid2, textid, search, response1) {
+function getFreeTextData(tableid, tableid2, textid, textid2, search, response1) {
   response1=parse_JSON_response(textid, response1);
   if (!response1) return;
 
@@ -151,14 +153,18 @@ function getFreeTextData(tableid, tableid2, textid, search, response1) {
   }
 
   //Callback is called upon response of the http request which typically is long after this function ends
-  ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,tableid2,textid,response1,response2)});
+  ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,tableid2,textid,textid2,response1,response2)});
 }
 
 
 // Externally called function
 function getBiseData(tableid, tableid2, search) {
   textid='search_response_text';
+  textid2='search_response_text2';
+
   document.getElementById(textid).innerHTML = "Searching...";
+  setInvisible(textid2); //Make sure text2 is hidden
+  
   document.getElementById(tableid).innerHTML=""; //Clear table
   document.getElementById(tableid2).innerHTML=""; //Clear table2
 
@@ -166,7 +172,7 @@ function getBiseData(tableid, tableid2, search) {
   json_url=json_url_multimodal;
 
   //Callback is called upon response of the http request which typically is long after this function ends
-  ajaxGet(json_url,function (response1) {getFreeTextData(tableid, tableid2, textid, search, response1)}); //callback is second search
+  ajaxGet(json_url,function (response1) {getFreeTextData(tableid, tableid2, textid, textid2, search, response1)}); //callback is second search
 }
 
 
@@ -183,4 +189,12 @@ function addRowToTable(tableid,strs,link) {
   };
 }
   
-//</script>
+// Make element visible
+function setVisible(elemID) {
+  document.getElementById(elemID).style.display = "block";
+}
+function setInvisible(elemID) {
+  document.getElementById(elemID).style.display = "none";
+}
+
+</script>
