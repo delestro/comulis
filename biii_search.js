@@ -67,33 +67,37 @@ function getBiseData(tableid, search) {
         function (response) {
           // console.log(response.status);
           if (response.status !== 200) {
-            document.body.innerHTML = "Failed retrieving data from biii! "+response.status+" - "+response.statusText;
+            document.getElementById('search_response_text').innerHTML = "Failed retrieving data from biii! "+response.status+" - "+response.statusText;
             return;
           }
           try {
             response = JSON.parse(response.responseText);
           } catch (objError) {
             console.error(objError.message);
-            document.body.innerHTML = "Failed parsing JSON data! "+objError.message;
+            document.getElementById('search_response_text').innerHTML = "Failed parsing JSON data! "+objError.message;
             return;
           }
-            if (!response) {
-                document.body.innerHTML = "Failed getting JSON data!";
-                return;
-            }
-           document.getElementById(tableid).innerHTML="";
-            for (const e of response) {
-                // console.log(e.title);
-                var link="<a href=\""+basename_node+e.nid+"\">";
-                var img="";
-                var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
+          if (!response) {
+              document.getElementById('search_response_text').innerHTML = "Failed getting JSON data!";
+              return;
+          }
+        
+          // We got data! :-)
+          document.getElementById('search_response_text').innerHTML = response.length + " results"; //Report #hits
 
-                if (e.field_image)
-		              img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
-	
-                //addRowToTable(tableid,[img,e.title,e.body],link);
-                addRowToTable(tableid,[img,e.title,short_body],link);
-            }
+          document.getElementById(tableid).innerHTML="";
+          for (const e of response) {
+              // console.log(e.title);
+              var link="<a href=\""+basename_node+e.nid+"\">";
+              var img="";
+              var short_body = e.body.substring(0, 200) + '...'; //Trim down text to 200 characters
+
+              if (e.field_image)
+                img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
+
+              //addRowToTable(tableid,[img,e.title,e.body],link);
+              addRowToTable(tableid,[img,e.title,short_body],link);
+          }
     });
 
     // Style adjsutments
