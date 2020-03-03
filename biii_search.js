@@ -77,14 +77,22 @@ function parse_JSON_response(textid, response) {
   return response;
 }
 
-//Place the data in the biiitable
-function publish_JSON_data(tableid, textid, response) {
-  response=parse_JSON_response(textid, response);
 
+//Parse result and place the data in the biiitable
+function publish_JSON_data(tableid, textid, response1, response2) {
+  response2=parse_JSON_response(textid, response2);
+
+  document.getElementById(textid).innerHTML = response1.length + ":" + response2.length + " results"; //Report #hits
+
+  let in_response1 = new Set();
+  for (const e of response1) {
+    in_response1.add(e.nid); //Store the NodeID
+  }
+  
+  response=response2;
   if (response) {
-    document.getElementById(textid).innerHTML = response.length + " results"; //Report #hits
+    document.getElementById(tableid).innerHTML=""; //Clear table
 
-    document.getElementById(tableid).innerHTML="";
     for (const e of response) {
         // console.log(e.title);
         var link="<a href=\""+basename_node+e.nid+"\">";
@@ -94,19 +102,25 @@ function publish_JSON_data(tableid, textid, response) {
         if (e.field_image)
           img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
 
+        if (!in_response1.has(e.nid))
+          short_body = "NOT!"+short_body; //Not in response1
+
         //addRowToTable(tableid,[img,e.title,e.body],link);
         addRowToTable(tableid,[img,e.title,short_body],link);
     }
 
     // Style adjustments
     var table=document.getElementById(tableid);
-    table.setAttribute("class", "table_biii");
+    table.setAttribute("class", "table_biii"); //To move to table.html?
   }
 }
 
-function getBiseData(tableid, search) {
-  textid='search_response_text';
-  document.getElementById(textid).innerHTML = "Searching...";
+
+//Second search
+function getFreeTextData(tableid, textid, search, response1) {
+  response1=parse_JSON_response(textid, response1);
+
+  document.getElementById(textid).innerHTML = "Searching...."; //add a dot
 
   // Set the json_url according to the search we need
   if (search == 'registration') {
@@ -119,8 +133,21 @@ function getBiseData(tableid, search) {
     json_url = json_url_visualization
   }
 
-  //Callback is called upon response of the http request
-  response=ajaxGet(json_url,function (response) {publish_JSON_data(tableid,textid,response)});
+  //Callback is called upon response of the http request which typically is long after this function ends
+  ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,textid,response1,response2)});
+}
+
+
+// Externally called function
+function getBiseData(tableid, search) {
+  textid='search_response_text';
+  document.getElementById(textid).innerHTML = "Searching...";
+
+  // Set the json_url according to the search we need
+  json_url=json_url_multimodal;
+
+  //Callback is called upon response of the http request which typically is long after this function ends
+  ajaxGet(json_url,function (response) {getFreeTextData(tableid, textid, search, response1)}); //callback is second search
 }
 
 
