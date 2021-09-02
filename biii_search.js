@@ -1,9 +1,7 @@
 <script>
 // This is injected html code into the page header, thus script tag at beginning/end.
 
-
 // BIII ACCESS URLs
-
 //In due time change this to the main site
 var base_url="https://test.biii.eu";
 
@@ -77,23 +75,22 @@ function parse_JSON_response(textid, response) {
   return response;
 }
 
-
 //Parse result and place the data in the biiitable
 function publish_JSON_data(tableid, tableid2, textid, textid2, response1, response2) {
   response2=parse_JSON_response(textid, response2);
 
   let in_response1 = new Set();
   for (const e of response1) {
-    in_response1.add(e.nid); //Store the NodeID
+    in_response1.add(e.nid[0].value); //Store the NodeID
   }
-  
+
   count1=0;
   count2=0;
 
   if (response2) {
     //Loop it twice, first 1&2, then 2 only
     for (const e of response2) {
-      if (!in_response1.has(e.nid))
+      if (!in_response1.has(parseInt(e.nid))) 
         continue; //Not in response1
 
       var link="<a href=\""+basename_node+e.nid+"\">";
@@ -109,7 +106,7 @@ function publish_JSON_data(tableid, tableid2, textid, textid2, response1, respon
 
     //Fill Table 2
     for (const e of response2) {
-      if (in_response1.has(e.nid))
+      if (in_response1.has(parseInt(e.nid)))
         continue; //In response1
     
       if (!count2)
@@ -126,9 +123,9 @@ function publish_JSON_data(tableid, tableid2, textid, textid2, response1, respon
       addRowToTable(tableid2,[img,e.title,short_body],link); //Add to Table2
     }
     document.getElementById(textid).innerHTML = count1 + " (" + count2 + ")" + " results"; //Report #hits
+  
   }
 }
-
 
 //Second search
 function getFreeTextData(tableid, tableid2, textid, textid2, search, response1) {
@@ -152,7 +149,6 @@ function getFreeTextData(tableid, tableid2, textid, textid2, search, response1) 
   ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,tableid2,textid,textid2,response1,response2)});
 }
 
-
 // Externally called function
 function getBiseData(tableid, tableid2, search) {
   textid='search_response_text';
@@ -171,9 +167,7 @@ function getBiseData(tableid, tableid2, search) {
   ajaxGet(json_url,function (response1) {getFreeTextData(tableid, tableid2, textid, textid2, search, response1)}); //callback is second search
 }
 
-
 // TABLE GENERATOR
-
 function addRowToTable(tableid,strs,link) {
   var table=document.getElementById(tableid);
   var row=table.insertRow(-1);
