@@ -4,6 +4,10 @@ Here we can find the custom javascript for the comulis website, to query biii.eu
 
 Currently being used on https://www.comulis.eu/correlation-software-porto2019
 
+Combines fulltext search for registration, segmentation, visualization  \
+&nbsp; http://biii.eu/searchjsonexport?search_api_fulltext=(?=visualization)&_format=json  \
+with advance search for has-topic "multimodal imaging"  \
+&nbsp; http://biii.eu/all-content-rest?type=software&field_has_function_target_id[]=4192&field_type_target_id=All&_format=json
 
 ## Files description
 
