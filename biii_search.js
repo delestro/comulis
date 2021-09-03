@@ -77,6 +77,7 @@ function parse_JSON_response(textid, response) {
 
 //Parse result and place the data in the biiitable
 function publish_JSON_data(tableid, tableid2, textid, textid2, response1, response2) {
+  document.getElementById(textid).innerHTML = "Searching....."; //add a 5th dot
   response2=parse_JSON_response(textid, response2);
 
   let in_response1 = new Set();
@@ -132,7 +133,7 @@ function getFreeTextData(tableid, tableid2, textid, textid2, search, response1) 
   response1=parse_JSON_response(textid, response1);
   if (!response1) return;
 
-  document.getElementById(textid).innerHTML = "Searching...."; //add a dot
+  document.getElementById(textid).innerHTML = "Searching...."; //add a 4th dot
 
   // Set the json_url according to the search we need
   if (search == 'registration') {
