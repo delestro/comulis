@@ -1,5 +1,6 @@
 <script>
 // This is injected html code into the page header, thus script tag at beginning/end.
+
 // BIII ACCESS URLs
 //In due time change this to the main site
 var base_url="https://biii.eu";
@@ -8,9 +9,10 @@ var full_text_search="/searchjsonexport?search_api_fulltext="
 var json_postfix="&_format=json&source=COMULIS";
 var make_full_text_url = function(keyword) { //No checking performed, do NOT feed user supplied data
   return base_url+full_text_search+"(?="+keyword+")"+json_postfix;
-}
+};
+
 //Search for 'type=software' and 'has_topic=multimodal'
-var advanced_search="/all-content-rest?type=software&field_has_topic_target_id_1%5B%5D=4774"
+var advanced_search="/all-content-rest?type=software&field_has_topic_target_id_1%5B%5D=4774";
 
 //These are used to query Biii
 var json_url_registration=make_full_text_url("registration");
@@ -49,6 +51,7 @@ var ajaxGet = function (url, callback) {
     xhr.send(null);
     return response;
 };
+
 //Takes xhr response and asks for JSON data
 //Errors are placed into getElementById(textid)
 function parse_JSON_response(textid, response) {
@@ -71,15 +74,16 @@ function parse_JSON_response(textid, response) {
   // We got data! :-)
   return response;
 }
+
 //Parse result and place the data in the biiitable
 function publish_JSON_data(tableid, tableid2, textid, textid2, response1, response2) {
   document.getElementById(textid).innerHTML = "Searching....."; //add a 5th dot
   response2=parse_JSON_response(textid, response2);
 
   if (response2) {
-	let in_response1 = new Set();
+  	let in_response1 = new Set();
   	for (const e of response1) {
-	  in_response1.add(e.nid[0].value); //Store the NodeID
+	    in_response1.add(e.nid[0].value); //Store the NodeID
   	}
 
   	count1=0;
@@ -101,7 +105,7 @@ function publish_JSON_data(tableid, tableid2, textid, textid2, response1, respon
       	addRowToTable(tableid,[img,e.title,short_body],link); //Add to Table1
       }
       else {
-		count2++;
+		    count2++;
         addRowToTable(tableid2,[img,e.title,short_body],link); //Add to Table2
       }
     }
@@ -110,9 +114,9 @@ function publish_JSON_data(tableid, tableid2, textid, textid2, response1, respon
       setVisible(textid2);
     
     document.getElementById(textid).innerHTML = count1 + " multimodal (" + count2 + " other)" + " results"; //Report #hits
-
   }
 }
+
 //Second search
 function getFreeTextData(tableid, tableid2, textid, textid2, search, response1) {
   response1=parse_JSON_response(textid, response1);
@@ -123,16 +127,17 @@ function getFreeTextData(tableid, tableid2, textid, textid2, search, response1) 
   // Set the json_url according to the search we need
   if (search == 'registration') {
     json_url = json_url_registration
-
-  } else if (search == 'segmentation') {
+  } 
+  else if (search == 'segmentation') {
     json_url = json_url_segmentation
-
-  } else if (search == 'visualization'){
+  } 
+  else if (search == 'visualization'){
     json_url = json_url_visualization
   }
   //Callback is called upon response of the http request which typically is long after this function ends
   ajaxGet(json_url,function (response2) {publish_JSON_data(tableid,tableid2,textid,textid2,response1,response2)});
 }
+
 // Externally called function
 function getBiseData(tableid, tableid2, search) {
   textid='search_response_text';
@@ -150,6 +155,7 @@ function getBiseData(tableid, tableid2, search) {
   //Callback is called upon response of the http request which typically is long after this function ends
   ajaxGet(json_url,function (response1) {getFreeTextData(tableid, tableid2, textid, textid2, search, response1)}); //callback is second search
 }
+
 // TABLE GENERATOR
 
 function addRowToTable(tableid,strs,link) {
