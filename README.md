@@ -2,7 +2,7 @@
 
 Here we can find the custom javascript for the comulis website, to query biii.eu for the search of multimodal correlated software
 
-Currently being used on https://www.comulis.eu/correlation-software-porto2019
+Currently being used on https://www.comulis.eu/correlation-software
 
 Combines fulltext search for registration, segmentation, visualization  \
 &nbsp; http://biii.eu/searchjsonexport?search_api_fulltext=(?=visualization)&_format=json  \
