@@ -2,7 +2,6 @@
 // This is injected html code into the page header, thus script tag at beginning/end.
 
 // BIII ACCESS URLs
-//In due time change this to the main site
 var base_url="https://biii.eu";
 
 var full_text_search="/searchjsonexport?search_api_fulltext="
@@ -165,7 +164,7 @@ function addRowToTable(tableid,strs,link) {
   for (const s of strs) {
     // console.log(s);
     var cell=row.insertCell(-1);
-    cell.innerHTML=link+s+"</a>";  //Ugly code to make it clickable, just as example
+    cell.innerHTML=link+s+"</a>";  //make the text clickable
   };
 }
   
