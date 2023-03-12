@@ -47,6 +47,7 @@
 /* First column min width */
 .table_biii td:nth-child(1)  {
   min-width: 100px;
+  text-align: center;
 }
 
 .biii-thumb{

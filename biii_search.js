@@ -99,13 +99,14 @@ function publish_JSON_data(tableid, tableid2, textid, textid2, response1, respon
       if (e.field_image)
        	img=link+"<img class='biii-thumb'  src=\""+basename_img+e.field_image+"\">";
       
+      const title="<b>"+e.title+"</b>"; //Bold title
       if (in_response1.has(parseInt(e.nid))) { // in response1
       	count1++;
-      	addRowToTable(tableid,[img,e.title,short_body],link); //Add to Table1
+      	addRowToTable(tableid,[img,title,short_body],link); //Add to Table1
       }
       else {
 		    count2++;
-        addRowToTable(tableid2,[img,e.title,short_body],link); //Add to Table2
+        addRowToTable(tableid2,[img,title,short_body],link); //Add to Table2
       }
     }
     
